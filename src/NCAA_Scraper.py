@@ -10,33 +10,26 @@ This is a temporary script file.
 
 import os
 import csv
-import copy
+import re
 import urllib.request
 from selenium import webdriver
 from urllib.request import FancyURLopener
 
-<<<<<<< HEAD
-=======
-#import pdb
-#pdb.set_trace()
->>>>>>> master
 
+import json
 import datetime
 import time
 import bs4
 
 class NCAAScraper:
-    # Get the list ofa =  game ids
+    # Get the list of game ids
     def GetGameList(self):
         currentDate = self.start
         self.totalGameList = {}
-<<<<<<< HEAD
         browser = webdriver.Chrome("/Users/AndyQin/Downloads/chromedriver") # change it to your own chromedriver address
-=======
-        browser = webdriver.Chrome("C:\\Users\\hyang89\\Documents\\Git\\chromedriver_win32\\chromedriver.exe") # change it to your own chromedriver address
->>>>>>> master
         time.sleep(10)
         while currentDate <= self.end:
+            
             # Here we use selenium to obtain the list of the games
             yearDig = str(currentDate.year)
             if currentDate.month < 10:
@@ -47,7 +40,6 @@ class NCAAScraper:
                 dayDig = self.digTrans[currentDate.day]
             else:
                 dayDig = str(currentDate.day)
-<<<<<<< HEAD
             browser.get('http://www.espn.com/mens-college-basketball/scoreboard/_/date/{}{}{}'.format(yearDig,monthDig,dayDig))
 
             elemList = browser.find_elements_by_class_name('mobileScoreboardLink')
@@ -56,40 +48,27 @@ class NCAAScraper:
                 address = elemList[i].get_attribute("href")
                 address=address.replace("game?","boxscore?")
                 addressList.append(address)
-=======
-            addressList = []
-            # Here group 50 has some missing matches on some days
-            # So we have to examine every conference's schedule
-            for cid in self.confID:
-                browser.get('http://www.espn.com/mens-college-basketball/scoreboard/_/group/{}/date/{}{}{}'.format(cid,yearDig,monthDig,dayDig))
-                time.sleep(5)
-                elemList = browser.find_elements_by_class_name('mobileScoreboardLink')
-                for i in range(0,len(elemList)):
-                    address = elemList[i].get_attribute("href")
-                    if not(address in addressList):
-                        addressList.append(address)
->>>>>>> master
             self.totalGameList[currentDate] = addressList
             currentDate = currentDate + datetime.timedelta(1)
             
-    def GetData(self):
-        header = ["Date","Home Team Name","Away Team Name","Home Team ID","Away Team ID","Neutral","Location","Zipcode","Tournament","Special",\
-                  "Home FG Made","Away FG Made","Home FG Attempt","Away FG Attempt","Home FG Percentage","Away FG Percentage",\
-                  "Home 3PT Made","Away 3PT Made","Home 3PT Attempt","Away 3PT Attempt","Home 3PT Percentage","Away 3PT Percentage",\
-                  "Home FT Made","Away FT Made","Home FT Attempt","Away FT Attempt","Home FT Percentage","Away FT Percentage",\
-                  "Home OREB","Away OREB","Home DREB","Away DREB","Home TREB","Away TREB","Home REB","Away REB","Home AST","Away AST",\
-                  "Home STL","Away STL","Home BLK","Away BLK","Home TO","Away TO","Home PF","Away PF","Home TF","Away TF",\
-                  "Home FF","Away FF","Home PTS","Away PTS"]
-        self.totalData = [header]
+    def GetDataList(self):
+        header = ["Team Name","Home","FG Made","FG Attempt","3PT Made","3PT Attempt","FT Made","FT Attempt",\
+                  "OREB","DREB","REB","AST","STL","BLK","TO","PF","PTS"]
+        
         # scrape the data from espn.com
         currentDate = self.start
-<<<<<<< HEAD
         browser = webdriver.Chrome("/Users/AndyQin/Downloads/chromedriver") # change it to your own chromedriver address
         while currentDate <= self.end:
             for igame in self.totalGameList[currentDate]:
+                dFile=urllib.request.urlopen(igame)
+                dString=dFile.read()
+                dString=dString.decode('utf-8')
+                
+                IDResult=re.findall('class="team-name" href)
                 # find the patterns and scrape the data
                 # Please try to finish this part of the code
                 a=1
+<<<<<<< Updated upstream
 =======
         while currentDate <= self.end:
             for igame in self.totalGameList[currentDate]:
@@ -238,6 +217,8 @@ class NCAAScraper:
             currentDate = currentDate + datetime.timedelta(1)
         
 >>>>>>> master
+=======
+>>>>>>> Stashed changes
     
     # Print the collected data into a csv file
     def Output(self):
@@ -247,7 +228,7 @@ class NCAAScraper:
         else:
             self.fo = open(self.fileOutput,'w',newline = '')
             self.csvWriter = csv.writer(self.fo,dialect = 'excel')
-        self.csvWriter.writerows(self.totalData)
+        self.csvWriter.writerows(self.gameList)
         self.fo.close()
             
     def __init__(self,start,end,fileOutput):
@@ -261,8 +242,3 @@ class NCAAScraper:
             self.existed = True
         else:
             self.existed = False
-<<<<<<< HEAD
-=======
-        # the group number of each conference
-        self.confID = [3,46,2,1,62,8,4,5,6,7,9,11,10,45,12,13,14,16,18,44,19,20,21,22,23,26,24,25,49,27,30,29]
->>>>>>> master
