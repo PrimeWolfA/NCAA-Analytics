@@ -15,8 +15,6 @@ import urllib.request
 from selenium import webdriver
 from urllib.request import FancyURLopener
 
-import pdb
-pdb.set_trace()
 
 import json
 import datetime
@@ -28,7 +26,7 @@ class NCAAScraper:
     def GetGameList(self):
         currentDate = self.start
         self.totalGameList = {}
-        browser = webdriver.Chrome("/Users/haoxiangyang/Downloads/chromedriver") # change it to your own chromedriver address
+        browser = webdriver.Chrome("/Users/AndyQin/Downloads/chromedriver") # change it to your own chromedriver address
         time.sleep(10)
         while currentDate <= self.end:
             
@@ -42,12 +40,13 @@ class NCAAScraper:
                 dayDig = self.digTrans[currentDate.day]
             else:
                 dayDig = str(currentDate.day)
-            browser.get('http://www.espn.com/mens-college-basketball/scoreboard/_/group/50/date/{}{}{}'.format(yearDig,monthDig,dayDig))
-            time.sleep(10)
+            browser.get('http://www.espn.com/mens-college-basketball/scoreboard/_/date/{}{}{}'.format(yearDig,monthDig,dayDig))
+
             elemList = browser.find_elements_by_class_name('mobileScoreboardLink')
             addressList = []
             for i in range(0,len(elemList)):
                 address = elemList[i].get_attribute("href")
+                address=address.replace("game?","boxscore?")
                 addressList.append(address)
             self.totalGameList[currentDate] = addressList
             currentDate = currentDate + datetime.timedelta(1)
@@ -58,11 +57,12 @@ class NCAAScraper:
         
         # scrape the data from espn.com
         currentDate = self.start
-        browser = webdriver.Chrome("/Users/haoxiangyang/Downloads/chromedriver") # change it to your own chromedriver address
+        browser = webdriver.Chrome("/Users/AndyQin/Downloads/chromedriver") # change it to your own chromedriver address
         while currentDate <= self.end:
             for igame in self.totalGameList[currentDate]:
                 # find the patterns and scrape the data
                 # Please try to finish this part of the code
+                a=1
     
     # Print the collected data into a csv file
     def Output(self):
